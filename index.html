@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-body {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.center {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-    </style>
+    <meta charset="UTF-8">
 </head>
 <body>
-    <div class="center">
-        <h1>Welcome to my page!</h1>
-    </div>
+    <div id="app"></div>
+
+    <script src="elm-min.js"></script>
+    <script>
+        Elm.Main.init({node: document.getElementById("app")})
+    </script>
 </body>
 </html>
