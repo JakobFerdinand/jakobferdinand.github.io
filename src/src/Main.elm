@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser exposing (Document)
-import Element exposing (Element, centerX, centerY, column, el, fill, height, image, paragraph, row, spacing, text, textColumn, width)
+import Element exposing (Element, centerX, centerY, column, el, fill, height, image, newTabLink, paragraph, row, spacing, text, textColumn, width)
 import Element.Font exposing (Font)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
@@ -52,6 +52,8 @@ viewContent model =
                 , paragraph [] [ text "Some weeks ago I discoverd the ELM programming language and immedeately felt in love with it." ]
                 , paragraph [] [ text "So I decided to build my own homepage in elm. I´m excited where that will take me." ]
                 ]
+            , newTabLink [ centerX ] { url = "https://github.com/JakobFerdinand", label = text "My Github page." }
+            , newTabLink [ centerX ] { url = "https://elm-lang.org/", label = text "A link to Elm language." }
             ]
         )
 
