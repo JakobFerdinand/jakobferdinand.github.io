@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser exposing (Document)
-import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, image, newTabLink, paragraph, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, image, newTabLink, padding, paragraph, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Element.Font exposing (Font)
 import Element.Region as Region
@@ -29,6 +29,7 @@ view model =
         [ Element.layout
             [ width fill
             , height fill
+            , padding 20
             , Element.Font.family
                 [ Element.Font.external
                     { name = "Montserrat"
