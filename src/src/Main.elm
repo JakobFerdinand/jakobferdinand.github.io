@@ -1,48 +1,85 @@
 module Main exposing (..)
 
 import Browser exposing (Document)
-import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, html, image, newTabLink, padding, paddingXY, paragraph, row, spacing, text, textColumn, width)
+import Browser.Navigation as Nav
+import Colors
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, image, link, newTabLink, padding, paddingXY, paragraph, row, spacing, text, textColumn, width)
+import Element.Background as Background
 import Element.Border as Border
-import Element.Font exposing (Font)
+import Element.Font as Font
 import Element.Region as Region
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
+import Palette exposing (..)
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (cx, cy, r, stroke, x1, x2, y1, y2)
+import Url exposing (Url)
+import Url.Parser as Parser exposing ((</>), Parser, s, string)
 
 
 type alias Model =
-    {}
+    { page : Page
+    , key : Nav.Key
+    }
 
 
 type Msg
-    = NoOp
+    = ClickedLink Browser.UrlRequest
+    | ChangedUrl Url
+    | GotColorsMsg Colors.Msg
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( {}, Cmd.none )
+type Route
+    = Home
+    | Colors
+
+
+type Page
+    = HomePage
+    | ColorsPage Colors.Model
+
+
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    ( { page = HomePage, key = key }, Cmd.none )
 
 
 view : Model -> Document Msg
 view model =
+    let
+        content : Element Msg
+        content =
+            case model.page of
+                HomePage ->
+                    viewContent model
+
+                ColorsPage colors ->
+                    Colors.view colors
+                        |> Element.map GotColorsMsg
+    in
     { title = "Jakob Ferdinand Wegenschimmel"
     , body =
         [ Element.layout
             [ width fill
             , height fill
-            , padding 20
-            , Element.Font.family
-                [ Element.Font.external
+            , padding small
+            , Background.color backgroundColor
+            , Font.family
+                [ Font.external
                     { name = "Montserrat"
                     , url = "https://fonts.googleapis.com/css?family=Montserrat:300&display=swap"
                     }
                 ]
+            , Font.color foregroundColor
             ]
             (column
                 [ height fill ]
                 [ viewHeader model
-                , viewContent model
+                , row
+                    [ width fill, height fill ]
+                    [ viewNavigation
+                    , content
+                    ]
                 , viewFooter model
                 ]
             )
@@ -55,12 +92,33 @@ viewHeader model =
     column
         [ alignTop
         , width fill
-        , spacing 8
+        , spacing xSmall
         ]
         [ row [ width fill ]
             [ text "Header"
             ]
         , line 1
+        ]
+
+
+viewNavigation : Element Msg
+viewNavigation =
+    let
+        navLink : Route -> { url : String, caption : String } -> Element Msg
+        navLink targetPage { url, caption } =
+            link []
+                { url = url
+                , label = text caption
+                }
+    in
+    column
+        [ alignLeft
+        , alignTop
+        , spacing small
+        , paddingXY 0 small
+        ]
+        [ navLink Home { url = "/", caption = "Home" }
+        , navLink Home { url = "/colors", caption = "Colors" }
         ]
 
 
@@ -70,8 +128,8 @@ viewContent model =
         [ Region.mainContent
         , centerX
         , centerY
-        , spacing 25
-        , paddingXY 0 20
+        , spacing small
+        , paddingXY 0 small
         ]
         [ image
             [ centerX
@@ -79,27 +137,16 @@ viewContent model =
             { src = "https://avatars1.githubusercontent.com/u/16666458?s=460&v=4"
             , description = "Me hanging down the 'Himmelsleiter' on the Donnerkogel ferrata."
             }
-        , el [ centerX ]
-            (html
-                (svg
-                    [ Svg.Attributes.width "100"
-                    , Svg.Attributes.height "100"
-                    ]
-                    [ circle
-                        [ cx "50"
-                        , cy "50"
-                        , r "50"
-                        , Svg.Attributes.fill "#aacc88"
-                        ]
-                        []
-                    ]
-                )
-            )
-        , el [ centerX, Element.Font.size 24 ] (text "Welcome!")
+        , el
+            [ centerX
+            , Font.size 24
+            , Font.color accent1Color
+            ]
+            (text "Welcome!")
         , textColumn
             [ centerX
-            , Element.Font.size 16
-            , Element.Font.center
+            , Font.size small
+            , Font.center
             ]
             [ paragraph [] [ text "I´m a software developer living in Austria." ]
             , paragraph [] [ text "In my day to day job I mostly use C# in .Net Client Applications." ]
@@ -116,7 +163,7 @@ viewFooter model =
     column
         [ alignBottom
         , width fill
-        , spacing 8
+        , spacing xSmall
         ]
         [ line 1
         , row
@@ -154,8 +201,53 @@ line strokeWidth =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        ClickedLink onUrlRequest ->
+            case onUrlRequest of
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+        ChangedUrl url ->
+            updateUrl url model
+
+        GotColorsMsg colorsMsg ->
+            case model.page of
+                ColorsPage colors ->
+                    toColors model (Colors.update colorsMsg colors)
+
+                _ ->
+                    ( model, Cmd.none )
+
+
+updateUrl : Url -> Model -> ( Model, Cmd Msg )
+updateUrl url model =
+    case Parser.parse parser url of
+        Just Colors ->
+            Colors.init
+                |> toColors model
+
+        Just Home ->
+            ( { model | page = HomePage }, Cmd.none )
+
+        Nothing ->
             ( model, Cmd.none )
+
+
+toColors : Model -> ( Colors.Model, Cmd Colors.Msg ) -> ( Model, Cmd Msg )
+toColors model ( colors, cmd ) =
+    ( { model | page = ColorsPage colors }
+    , Cmd.map GotColorsMsg cmd
+    )
+
+
+parser : Parser (Route -> a) a
+parser =
+    Parser.oneOf
+        [ Parser.map Home Parser.top
+        , Parser.map Colors (s "colors")
+        ]
 
 
 subscriptions : Model -> Sub Msg
@@ -165,8 +257,10 @@ subscriptions model =
 
 main : Program () Model Msg
 main =
-    Browser.document
+    Browser.application
         { init = init
+        , onUrlRequest = ClickedLink
+        , onUrlChange = ChangedUrl
         , view = view
         , update = update
         , subscriptions = subscriptions
