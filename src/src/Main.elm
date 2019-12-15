@@ -1,12 +1,14 @@
 module Main exposing (..)
 
 import Browser exposing (Document)
-import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, image, newTabLink, padding, paragraph, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignTop, centerX, centerY, column, el, fill, height, html, image, newTabLink, padding, paddingXY, paragraph, row, spacing, text, textColumn, width)
 import Element.Border as Border
 import Element.Font exposing (Font)
 import Element.Region as Region
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
+import Svg exposing (circle, svg)
+import Svg.Attributes exposing (cx, cy, r, stroke, x1, x2, y1, y2)
 
 
 type alias Model =
@@ -50,8 +52,16 @@ view model =
 
 viewHeader : Model -> Element Msg
 viewHeader model =
-    row [ alignTop ]
-        [ text "Header" ]
+    column
+        [ alignTop
+        , width fill
+        , spacing 8
+        ]
+        [ row [ width fill ]
+            [ text "Header"
+            ]
+        , line 1
+        ]
 
 
 viewContent : Model -> Element Msg
@@ -61,6 +71,7 @@ viewContent model =
         , centerX
         , centerY
         , spacing 25
+        , paddingXY 0 20
         ]
         [ image
             [ centerX
@@ -68,6 +79,22 @@ viewContent model =
             { src = "https://avatars1.githubusercontent.com/u/16666458?s=460&v=4"
             , description = "Me hanging down the 'Himmelsleiter' on the Donnerkogel ferrata."
             }
+        , el [ centerX ]
+            (html
+                (svg
+                    [ Svg.Attributes.width "100"
+                    , Svg.Attributes.height "100"
+                    ]
+                    [ circle
+                        [ cx "50"
+                        , cy "50"
+                        , r "50"
+                        , Svg.Attributes.fill "#aacc88"
+                        ]
+                        []
+                    ]
+                )
+            )
         , el [ centerX, Element.Font.size 24 ] (text "Welcome!")
         , textColumn
             [ centerX
@@ -86,8 +113,42 @@ viewContent model =
 
 viewFooter : Model -> Element Msg
 viewFooter model =
-    row [ alignBottom ]
-        [ text "Footer" ]
+    column
+        [ alignBottom
+        , width fill
+        , spacing 8
+        ]
+        [ line 1
+        , row
+            [ width fill
+            ]
+            [ text "Footer"
+            , el [ centerX ] (text "One is never alone with a rubber duck. - Douglas Adams")
+            ]
+        ]
+
+
+line : Int -> Element Msg
+line strokeWidth =
+    el [ centerX ]
+        (html
+            (svg
+                [ Svg.Attributes.height <| String.fromInt strokeWidth
+                , Svg.Attributes.width "800"
+                ]
+                [ Svg.line
+                    [ x1 "0"
+                    , y1 "0"
+                    , x2 "1200"
+                    , y2 "0"
+                    , stroke "black"
+                    , Svg.Attributes.strokeWidth <| String.fromInt strokeWidth
+                    , Svg.Attributes.fill "none"
+                    ]
+                    []
+                ]
+            )
+        )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
