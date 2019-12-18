@@ -1,4 +1,4 @@
-module Colors exposing (Model, Msg, init, update, view)
+module PaletteView exposing (Model, Msg, init, update, view)
 
 import Browser
 import Element exposing (Color, Element, centerX, centerY, column, el, fill, height, html, row, spacing, text)

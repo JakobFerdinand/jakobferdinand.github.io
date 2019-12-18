@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Browser exposing (Document)
 import Browser.Navigation as Nav
-import Colors
 import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, image, link, newTabLink, padding, paddingXY, paragraph, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
@@ -11,6 +10,7 @@ import Element.Region as Region
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Palette exposing (..)
+import PaletteView
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (cx, cy, r, stroke, x1, x2, y1, y2)
 import Url exposing (Url)
@@ -26,17 +26,17 @@ type alias Model =
 type Msg
     = ClickedLink Browser.UrlRequest
     | ChangedUrl Url
-    | GotColorsMsg Colors.Msg
+    | GotPaletteViewMsg PaletteView.Msg
 
 
 type Route
     = Home
-    | Colors
+    | PaletteView
 
 
 type Page
     = HomePage
-    | ColorsPage Colors.Model
+    | PaletteViewPage PaletteView.Model
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -53,9 +53,9 @@ view model =
                 HomePage ->
                     viewContent model
 
-                ColorsPage colors ->
-                    Colors.view colors
-                        |> Element.map GotColorsMsg
+                PaletteViewPage palette ->
+                    PaletteView.view palette
+                        |> Element.map GotPaletteViewMsg
     in
     { title = "Jakob Ferdinand Wegenschimmel"
     , body =
@@ -118,7 +118,7 @@ viewNavigation =
         , paddingXY 0 small
         ]
         [ navLink Home { url = "/", caption = "Home" }
-        , navLink Home { url = "/colors", caption = "Colors" }
+        , navLink Home { url = "/palette", caption = "Palette" }
         ]
 
 
@@ -212,10 +212,10 @@ update msg model =
         ChangedUrl url ->
             updateUrl url model
 
-        GotColorsMsg colorsMsg ->
+        GotPaletteViewMsg paletteMsg ->
             case model.page of
-                ColorsPage colors ->
-                    toColors model (Colors.update colorsMsg colors)
+                PaletteViewPage palette ->
+                    toPalette model (PaletteView.update paletteMsg palette)
 
                 _ ->
                     ( model, Cmd.none )
@@ -224,9 +224,9 @@ update msg model =
 updateUrl : Url -> Model -> ( Model, Cmd Msg )
 updateUrl url model =
     case Parser.parse parser url of
-        Just Colors ->
-            Colors.init
-                |> toColors model
+        Just PaletteView ->
+            PaletteView.init
+                |> toPalette model
 
         Just Home ->
             ( { model | page = HomePage }, Cmd.none )
@@ -235,10 +235,10 @@ updateUrl url model =
             ( model, Cmd.none )
 
 
-toColors : Model -> ( Colors.Model, Cmd Colors.Msg ) -> ( Model, Cmd Msg )
-toColors model ( colors, cmd ) =
-    ( { model | page = ColorsPage colors }
-    , Cmd.map GotColorsMsg cmd
+toPalette : Model -> ( PaletteView.Model, Cmd PaletteView.Msg ) -> ( Model, Cmd Msg )
+toPalette model ( colors, cmd ) =
+    ( { model | page = PaletteViewPage colors }
+    , Cmd.map GotPaletteViewMsg cmd
     )
 
 
@@ -246,7 +246,7 @@ parser : Parser (Route -> a) a
 parser =
     Parser.oneOf
         [ Parser.map Home Parser.top
-        , Parser.map Colors (s "colors")
+        , Parser.map PaletteView (s "palette")
         ]
 
 
