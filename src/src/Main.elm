@@ -2,16 +2,14 @@ module Main exposing (..)
 
 import Browser exposing (Document)
 import Browser.Navigation as Nav
-import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, image, link, newTabLink, padding, paddingXY, paragraph, row, spacing, text, textColumn, width)
+import Element exposing (Element, alignBottom, alignLeft, alignTop, centerX, centerY, column, el, fill, height, html, image, link, newTabLink, padding, paddingXY, paragraph, px, row, spacing, text, textColumn, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Region as Region
-import Html exposing (Html, div)
-import Html.Attributes exposing (class)
 import Palette exposing (..)
 import PaletteView
-import Svg exposing (circle, svg)
+import Svg exposing (svg)
 import Svg.Attributes exposing (cx, cy, r, stroke, x1, x2, y1, y2)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, s, string)
@@ -41,7 +39,7 @@ type Page
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( { page = HomePage, key = key }, Cmd.none )
+    updateUrl url { page = HomePage, key = key }
 
 
 view : Model -> Document Msg
@@ -133,6 +131,10 @@ viewContent model =
         ]
         [ image
             [ centerX
+            , width <| px (xLarge * 3)
+            , height <| px (xLarge * 3)
+            , Border.rounded (xLarge * 3)
+            , Element.clip
             ]
             { src = "https://avatars1.githubusercontent.com/u/16666458?s=460&v=4"
             , description = "Me hanging down the 'Himmelsleiter' on the Donnerkogel ferrata."
@@ -147,10 +149,11 @@ viewContent model =
             [ centerX
             , Font.size small
             , Font.center
+            , width <| px (xLarge * 4)
             ]
             [ paragraph [] [ text "I´m a software developer living in Austria." ]
             , paragraph [] [ text "In my day to day job I mostly use C# in .Net Client Applications." ]
-            , paragraph [] [ text "Some weeks ago I discoverd the ELM programming language and immedeately felt in love with it." ]
+            , paragraph [] [ text "Some time ago I discoverd the ELM programming language and immedeately felt in love with it." ]
             , paragraph [] [ text "So I decided to build my own homepage in elm. I´m excited where that will take me." ]
             ]
         , newTabLink [ centerX ] { url = "https://github.com/JakobFerdinand", label = text "My Github page." }

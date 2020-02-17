@@ -5201,86 +5201,6 @@ var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$HomePage = {$: 0};
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$init = F3(
-	function (_v0, url, key) {
-		return _Utils_Tuple2(
-			{aE: key, Z: $author$project$Main$HomePage},
-			$elm$core$Platform$Cmd$none);
-	});
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$subscriptions = function (model) {
-	return $elm$core$Platform$Sub$none;
-};
-var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $author$project$Main$GotPaletteViewMsg = function (a) {
-	return {$: 2, a: a};
-};
-var $author$project$Main$PaletteViewPage = function (a) {
-	return {$: 1, a: a};
-};
-var $elm$core$Platform$Cmd$map = _Platform_map;
-var $author$project$Main$toPalette = F2(
-	function (model, _v0) {
-		var colors = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					Z: $author$project$Main$PaletteViewPage(colors)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPaletteViewMsg, cmd));
-	});
-var $elm$url$Url$addPort = F2(
-	function (maybePort, starter) {
-		if (maybePort.$ === 1) {
-			return starter;
-		} else {
-			var port_ = maybePort.a;
-			return starter + (':' + $elm$core$String$fromInt(port_));
-		}
-	});
-var $elm$url$Url$addPrefixed = F3(
-	function (prefix, maybeSegment, starter) {
-		if (maybeSegment.$ === 1) {
-			return starter;
-		} else {
-			var segment = maybeSegment.a;
-			return _Utils_ap(
-				starter,
-				_Utils_ap(prefix, segment));
-		}
-	});
-var $elm$url$Url$toString = function (url) {
-	var http = function () {
-		var _v0 = url.bm;
-		if (!_v0) {
-			return 'http://';
-		} else {
-			return 'https://';
-		}
-	}();
-	return A3(
-		$elm$url$Url$addPrefixed,
-		'#',
-		url.a0,
-		A3(
-			$elm$url$Url$addPrefixed,
-			'?',
-			url.bn,
-			_Utils_ap(
-				A2(
-					$elm$url$Url$addPort,
-					url.bj,
-					_Utils_ap(http, url.a5)),
-				url.bh)));
-};
-var $author$project$PaletteView$update = F2(
-	function (msg, model) {
-		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-	});
 var $author$project$PaletteView$init = _Utils_Tuple2(
 	{},
 	$elm$core$Platform$Cmd$none);
@@ -6017,6 +5937,25 @@ var $author$project$Main$parser = $elm$url$Url$Parser$oneOf(
 			1,
 			$elm$url$Url$Parser$s('palette'))
 		]));
+var $author$project$Main$GotPaletteViewMsg = function (a) {
+	return {$: 2, a: a};
+};
+var $author$project$Main$PaletteViewPage = function (a) {
+	return {$: 1, a: a};
+};
+var $elm$core$Platform$Cmd$map = _Platform_map;
+var $author$project$Main$toPalette = F2(
+	function (model, _v0) {
+		var colors = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					Z: $author$project$Main$PaletteViewPage(colors)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPaletteViewMsg, cmd));
+	});
 var $author$project$Main$updateUrl = F2(
 	function (url, model) {
 		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$parser, url);
@@ -6035,6 +5974,68 @@ var $author$project$Main$updateUrl = F2(
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
+	});
+var $author$project$Main$init = F3(
+	function (_v0, url, key) {
+		return A2(
+			$author$project$Main$updateUrl,
+			url,
+			{aE: key, Z: $author$project$Main$HomePage});
+	});
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Main$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 1) {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + $elm$core$String$fromInt(port_));
+		}
+	});
+var $elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 1) {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var $elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _v0 = url.bm;
+		if (!_v0) {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		$elm$url$Url$addPrefixed,
+		'#',
+		url.a0,
+		A3(
+			$elm$url$Url$addPrefixed,
+			'?',
+			url.bn,
+			_Utils_ap(
+				A2(
+					$elm$url$Url$addPort,
+					url.bj,
+					_Utils_ap(http, url.a5)),
+				url.bh)));
+};
+var $author$project$PaletteView$update = F2(
+	function (msg, model) {
+		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -12142,6 +12143,8 @@ var $author$project$PaletteView$view = function (model) {
 };
 var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
 var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.c3);
+var $mdgriffith$elm_ui$Internal$Flag$overflow = $mdgriffith$elm_ui$Internal$Flag$flag(20);
+var $mdgriffith$elm_ui$Element$clip = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.b6);
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -12281,6 +12284,21 @@ var $mdgriffith$elm_ui$Element$paragraph = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
+	return {$: 0, a: a};
+};
+var $mdgriffith$elm_ui$Element$px = $mdgriffith$elm_ui$Internal$Model$Px;
+var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
+var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderRound,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			'br-' + $elm$core$String$fromInt(radius),
+			'border-radius',
+			$elm$core$String$fromInt(radius) + 'px'));
+};
 var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
@@ -12321,7 +12339,15 @@ var $author$project$Main$viewContent = function (model) {
 				A2(
 				$mdgriffith$elm_ui$Element$image,
 				_List_fromArray(
-					[$mdgriffith$elm_ui$Element$centerX]),
+					[
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$width(
+						$mdgriffith$elm_ui$Element$px($author$project$Palette$xLarge * 3)),
+						$mdgriffith$elm_ui$Element$height(
+						$mdgriffith$elm_ui$Element$px($author$project$Palette$xLarge * 3)),
+						$mdgriffith$elm_ui$Element$Border$rounded($author$project$Palette$xLarge * 3),
+						$mdgriffith$elm_ui$Element$clip
+					]),
 				{ce: 'Me hanging down the \'Himmelsleiter\' on the Donnerkogel ferrata.', cZ: 'https://avatars1.githubusercontent.com/u/16666458?s=460&v=4'}),
 				A2(
 				$mdgriffith$elm_ui$Element$el,
@@ -12338,7 +12364,9 @@ var $author$project$Main$viewContent = function (model) {
 					[
 						$mdgriffith$elm_ui$Element$centerX,
 						$mdgriffith$elm_ui$Element$Font$size($author$project$Palette$small),
-						$mdgriffith$elm_ui$Element$Font$center
+						$mdgriffith$elm_ui$Element$Font$center,
+						$mdgriffith$elm_ui$Element$width(
+						$mdgriffith$elm_ui$Element$px($author$project$Palette$xLarge * 4))
 					]),
 				_List_fromArray(
 					[
@@ -12361,7 +12389,7 @@ var $author$project$Main$viewContent = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$mdgriffith$elm_ui$Element$text('Some weeks ago I discoverd the ELM programming language and immedeately felt in love with it.')
+								$mdgriffith$elm_ui$Element$text('Some time ago I discoverd the ELM programming language and immedeately felt in love with it.')
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$paragraph,
