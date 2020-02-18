@@ -1,3 +1,7 @@
+# if uglyfyjs is missing run:
+# npm install --global uglyfy-js
+# https://github.com/mishoo/UglifyJS2
+
 js="elm.js"
 min="../elm-min.js"
 
